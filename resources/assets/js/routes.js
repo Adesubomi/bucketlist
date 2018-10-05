@@ -4,6 +4,8 @@ import Home from './components/Home'
 import BuckelistsIndex from './components/BuckelistsIndex'
 import BuckelistsCreate from './components/BuckelistsCreate'
 import BuckelistsShow from './components/BuckelistsShow'
+import Dashboard from './components/Dashboard'
+import NotFound from './components/NotFound'
 
 import Login from './components/Login'
 
@@ -12,11 +14,13 @@ export default new VueRouter({
 
 		{ path: '/', component: Home,
 			children: [
-				{ path: 'bucketlists', component: BuckelistsIndex },
-				{ path: 'bucketlists/:id', component: BuckelistsShow },
+				{ path: '', component: Dashboard, name: 'home' },
+				{ path: 'bucketlists', component: BuckelistsIndex, name: 'bucketlists.index' },
+				{ path: 'bucketlists/:id', component: BuckelistsShow, name: 'buckelists.show' },
 			]
 	 	},
-		{ path: '/auth/login', component: Login }
+		{ path: '/auth/login', component: Login },
+    	{ path: '*', component: NotFound }
 	],
-	linkActiveClass: 'is-active'
+	linkActiveClass: 'is-active',
 })

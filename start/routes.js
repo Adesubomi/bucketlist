@@ -32,3 +32,5 @@ Route.group(() => {
 .prefix('api/v1')
 .namespace('Api/v1')
 .middleware('auth')
+
+Route.any('*', 'HomeController.index')

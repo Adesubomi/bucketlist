@@ -38,7 +38,8 @@
     "imagemin": "^5.3.1",
     "laravel-mix": "^2.1.14",
     "vue": "^2.5.17",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-snotify": "^3.2.1"
   },
   "autoload": {
     "App": "./app"

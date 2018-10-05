@@ -20,8 +20,8 @@
 				</div>
 
 				<div style="padding: 14px; margin-bottom: 28px; text-align: center;">
-					<el-button type="primary">
-						<i class=""></i>
+					<el-button type="primary" @click.prevent="login()" :disabled="is_loading">
+						<i class="el-icon-loading" v-show="is_loading"></i>
 						Login</el-button>
 				</div>
 			</el-card>
@@ -33,17 +33,13 @@
 	.login-card {
 		margin-top: 40px;
 	}
-
-	.img-login-icon {
-		margin: 20px auto;
-		max-width: 144px;
-	}
 </style>
 
 <script>
 	export default {
 		data() {
 			return {
+				is_loading: false,
 				currentDate: new Date(),
 				// tableData: Array(20).fill(item)
 				tableData: [],
@@ -51,6 +47,14 @@
 					email: '',
 					password: ''
 				}
+			}
+		},
+		methods: {
+
+			login: function () {
+
+				this.is_loading = true;
+				console.log(this.is_loading);
 			}
 		}
 	};

@@ -53,10 +53,13 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 //  */
 //
 import App from './App.vue'
+import AppLoader from './partials/AppLoader'
 //
 const app = new Vue({
 	el: '#app',
 	render: h => h(App),
 	router,
-	components: {}
+	components: {
+		AppLoader
+	}
 })
