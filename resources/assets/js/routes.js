@@ -14,12 +14,12 @@ export default new VueRouter({
 
 		{ path: '/', component: Home,
 			children: [
-				{ path: '', component: Dashboard, name: 'home' },
-				{ path: 'bucketlists', component: BuckelistsIndex, name: 'bucketlists.index' },
-				{ path: 'bucketlists/:id', component: BuckelistsShow, name: 'buckelists.show' },
+				{ path: '', component: Dashboard, name: 'dashboard', meta: {requires_auth: true} },
+				{ path: 'bucketlists', component: BuckelistsIndex, name: 'bucketlists.index', meta: {requires_auth: true} },
+				{ path: 'bucketlists/:id', component: BuckelistsShow, name: 'buckelists.show', meta: {requires_auth: true} },
 			]
 	 	},
-		{ path: '/auth/login', component: Login },
+		{ path: '/auth/login', component: Login, name: 'login' },
     	{ path: '*', component: NotFound }
 	],
 	linkActiveClass: 'is-active',

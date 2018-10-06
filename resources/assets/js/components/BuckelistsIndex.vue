@@ -30,7 +30,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped="">
 	.bucketlist-card {
 		margin-top: 12px;
 		cursor: pointer;
@@ -55,6 +55,9 @@ export default {
 	components: {
 		AppLoader,
 	},
+	mounted: function () {
+		this.fetchBucketlists()
+	},
 	data () {
 		return {
 			is_fetching: true,
@@ -68,7 +71,16 @@ export default {
 
 	methods: {
 		openBucketlist: function (id) {
-			this.$router.push({name: 'buckelists.show', params:{id: 1}});
+			this.$router.push({name: 'buckelists.show', params:{id: 1}})
+		},
+
+		fetchBucketlists: function () {
+
+			console.log('Getting bucketlists...')
+
+			setTimeout( () => {
+				this.is_fetching = false
+			}, 1600);
 		}
 	}
 }

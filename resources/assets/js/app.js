@@ -1,17 +1,29 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
 import ElementUI from 'element-ui'
 // Load VueRouter instance containing front end routes
 import router from './routes'
+import store from './store'
+import Utility from './packages/Utility';
+import axios from 'axios'
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
-import axios from 'axios'
 window.Vue = Vue
+Vue.config.productionTip = false
+
 Vue.use(VueRouter)
 Vue.use(ElementUI)
+Vue.use(Utility)
+Vue.use(require('vue-snotify'), {
+    defaults: {
+        maxOnScreen: 1,
+        maxAtPosition: 1,
+    }
+});
 
 window.axios = axios
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
@@ -59,7 +71,56 @@ const app = new Vue({
 	el: '#app',
 	render: h => h(App),
 	router,
+	store,
 	components: {
 		AppLoader
+	},
+	beforeCreate: function() {
+
+		// get the accessToken from whereever you stored it
+		store.commit('initialize')
+		const accessToken = store.getters.token
+
+		// intercept requests
+		axios.interceptors.request.use(request => {
+            if (accessToken) { request.headers.Authorization = `Bearer ${accessToken}`; }
+            return request;
+        });
+
+		// intercept responses
+        axios.interceptors.response.use(response => {
+
+            if (response.status === 401) {
+
+				// destroy authentication keys and logout
+                this.$store.commit('dis_authenticate');
+                this.$router.replace({name: 'login'});
+            }
+            return response;
+        });
+
+		// for whenn navigation is initiated
+        this.$router.beforeEach( (to, from, next) => {
+
+            if ( to.meta.requires_auth !== undefined && to.meta.requires_auth === true ) {
+
+                if ( !store.getters.is_authenticated ) {
+                    next({name: 'login'});
+                }
+                else {
+                    next();
+                }
+            }
+
+			next();
+
+        });
+
+		// for page refresh, there is no navigation initiation
+        if (this.$route.meta.requires_auth !== undefined && this.$route.meta.requires_auth === true) {
+            if ( !store.getters.is_authenticated ) {
+                this.$router.replace({name: 'login'});
+            }
+        }
 	}
 })

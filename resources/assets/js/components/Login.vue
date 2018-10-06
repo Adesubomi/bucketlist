@@ -54,7 +54,18 @@
 			login: function () {
 
 				this.is_loading = true;
-				console.log(this.is_loading);
+
+				axios.post(this.$api.url('login'), this.resolvedBankAccount)
+	                .then(response => {
+
+						this.is_loading = false;
+						console.log(response);
+					})
+					.catch( err => {
+
+						this.is_loading = false;
+						console.log(err);
+					})
 			}
 		}
 	};

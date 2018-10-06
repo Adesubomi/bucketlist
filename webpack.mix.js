@@ -10,7 +10,8 @@ let mix = require('laravel-mix');
  | file for your application, as well as bundling up your JS files.
  |
  */
- mix.js('resources/assets/js/app.js', 'public/assets/js')
+ mix.disableSuccessNotifications()
+ 	.js('resources/assets/js/app.js', 'public/assets/js')
  	.sass('resources/assets/sass/app.sass', 'public/assets/css')
  	.copy('resources/assets/img', 'public/assets/img', false)
  	.copy('resources/assets/fonts/themify-icons/fonts', 'public/fonts')
