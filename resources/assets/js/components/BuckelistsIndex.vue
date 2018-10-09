@@ -6,14 +6,14 @@
 					<h3>My bucketlists</h3>
 				</el-col>
 				<el-col :span="4">
-					<el-button size="small" icon="el-icon-plus" circle></el-button>
+					<el-button type="primary" @click.prevent="bucketlistCreate()" size="small" icon="el-icon-plus" circle></el-button>
 				</el-col>
 			</el-row>
 		</div>
 
-		<app-loader v-if="is_fetching">..Loading</app-loader>
-		<div class="" v-for="item in bucketlists" v-if="!is_fetching">
-			<el-card class="bucketlist-card" shadow="hover" @click.native="openBucketlist(1)">
+		<app-loader v-if="is_loading">..Loading</app-loader>
+		<div class="" v-for="item in bucketlists" v-if="!is_loading">
+			<el-card class="bucketlist-card" shadow="hover" @click.native="openBucketlist(item.id)">
 				<el-row type="flex">
 					<el-col :span="2">
 						<div style="margin-top: 3px; text-align: center;">
@@ -60,7 +60,7 @@ export default {
 	},
 	data () {
 		return {
-			is_fetching: true,
+			is_loading: true,
 			bucketlists: [
 				{name: "Champioship finalist teams ever", date: "Today"},
 				{name: "List of all players in Manchester Utd.", date: "Yesterday"},
@@ -71,16 +71,40 @@ export default {
 
 	methods: {
 		openBucketlist: function (id) {
-			this.$router.push({name: 'buckelists.show', params:{id: 1}})
+			this.$router.push({name: 'buckelists.show', params:{id: id}})
 		},
 
 		fetchBucketlists: function () {
 
-			console.log('Getting bucketlists...')
+			this.is_loading = true;
 
-			setTimeout( () => {
-				this.is_fetching = false
-			}, 1600);
+			axios.get(this.$api.url('bucketlists'))
+				.then(response => {
+					this.is_loading = false;
+
+					if (response.data.status && response.data.status == 'success') {
+
+						this.bucketlists = response.data.payload;
+					}
+					else {
+
+						this.$snotify.error('Unable to get buckelists',
+							'Sorry');
+					}
+				})
+				.catch( err => {
+
+					this.is_loading = false;
+					this.$snotify.error('Opertion failed. Try again later',
+						'Ooops!');
+
+						console.log(err);
+				})
+		},
+
+		bucketlistCreate: function () {
+
+			this.$snotify.prompt('Create bucketlist');
 		}
 	}
 }

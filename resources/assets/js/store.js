@@ -25,34 +25,49 @@ export default new Vuex.Store({
 			}
 		},
 
-		sample (state) {
-			console.log(LocalStorage)
-		},
-
 		saveToken (state, token) {
 			state._token = token
+			LocalStorage.set('_token', token)
 		},
 
 		deleteToken (state) {
 			state._token = ''
+			LocalStorage.remove('_token')
 		},
 
 		saveUser (state, user) {
 			state._user = user
+			LocalStorage.user('_token', user)
 		},
 
-		authenticate (state, user) {
+		authenticate (state, data) {
+
+			const {user, token} = data
+
+
 			if (user) {
 				state._user = user
+				LocalStorage.set('_user', user)
+			}
+
+			if (token) {
+				state._token = token
+				LocalStorage.set('_token', token)
 			}
 
 			state._authenticated = true
 		},
 
 		dis_authenticate (state) {
-			state.deleteToken()
+
 			state._user = {}
+			LocalStorage.remove('_user')
+
+			state._token = ''
+			LocalStorage.remove('_token')
+
 			state._authenticated = false
+
 		}
 
 	},

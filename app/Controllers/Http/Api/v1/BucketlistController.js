@@ -6,6 +6,7 @@ const Logger = use('Logger')
 const API = use('App/Services/Api')
 const Api = new API()
 const Bucketlist = use('App/Models/Bucketlist')
+const Item = use('App/Models/Item')
 
 class BucketlistController {
 
@@ -48,13 +49,36 @@ class BucketlistController {
 
         try {
 
-            let item = await Bucketlist.findOrFail(params.id)
-            return Api.success('Becketlist resource', item)
+            const bucketlist = await Bucketlist.findOrFail(params.id)
+
+            return Api.success('Becketlist resource', bucketlist)
 
         } catch (e) {
 
             let errors = [];
             errors.push({message: e})
+			Logger.info(e);
+            return Api.failure('Bucketlist not found', {errors})
+        }
+    }
+
+	async show_full ({request, response, params}) {
+
+        try {
+
+            let bucketlist = await Bucketlist.findOrFail(params.id)
+
+			bucketlist.items = await Item.query().where({
+				bucketlist_id: bucketlist.id
+			}).fetch()
+
+            return Api.success('Becketlist resource', bucketlist)
+
+        } catch (e) {
+
+            let errors = [];
+            errors.push({message: e})
+			Logger.info(e);
             return Api.failure('Bucketlist not found', {errors})
         }
     }

@@ -1,6 +1,7 @@
 <template>
 	<div class="">
 		<router-view></router-view>
+		<vue-snotify></vue-snotify>
 	</div>
 </template>
 
@@ -18,15 +19,7 @@
 <script>
 	export default {
 		data() {
-			return {
-				currentDate: new Date(),
-				// tableData: Array(20).fill(item)
-				tableData: [],
-				credentials: {
-					email: '',
-					password: ''
-				}
-			}
+			return {}
 		}
 	};
 </script>

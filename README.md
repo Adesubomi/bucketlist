@@ -6,8 +6,9 @@
 ```bash
 npm i -g @adonis/cli
 ```
-```bash
+
 * Open project directory in terminal and install your npm dependencies
+```bash
 npm i
 ```
 * Setup your database and update .env in root directory appropriately
@@ -19,6 +20,7 @@ adonis migration:run
 ```bash
 npm run fdev
 ```
+
 * Serve your application
 ```bash
 adonis serve --dev

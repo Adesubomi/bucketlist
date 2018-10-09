@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard'
 import NotFound from './components/NotFound'
 
 import Login from './components/Login'
+import Logout from './components/Logout'
 
 export default new VueRouter({
 	routes: [
@@ -20,6 +21,7 @@ export default new VueRouter({
 			]
 	 	},
 		{ path: '/auth/login', component: Login, name: 'login' },
+		{ path: '/auth/logout', component: Logout, name: 'logout' },
     	{ path: '*', component: NotFound }
 	],
 	linkActiveClass: 'is-active',

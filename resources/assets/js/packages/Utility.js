@@ -7,16 +7,32 @@ export default {
 
 		    base_url: AppInfo.apiUrl,
 
-		    path: function ($name) {
+		    path: function ($name, $params) {
 
 		        if (ApiRoutes.hasOwnProperty($name)){
-		            return ApiRoutes[$name].url;
+
+					let url = ApiRoutes[$name].url;
+
+					if ($params) {
+
+						for (var param in $params) {
+						    if ($params.hasOwnProperty(param)) {
+								url = url.replace(new RegExp(":"+ param, 'g'), $params[param]);
+						    }
+						}
+					}
+
+
+					// remove all arguments were not found in params
+					url = url.replace(new RegExp(/\/\:[a-z]+/, 'g'), '');
+					return url
 		        }
-		        return '/';
+
+		        return '/'
 		    },
 
-		    url: function ($name) {
-		        return this.base_url + this.path($name);
+		    url: function ($name, $params) {
+		        return this.base_url + this.path($name, $params);
 		    },
 		}
 	}

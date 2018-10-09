@@ -5,14 +5,14 @@
 				<img src="/assets/img/login-icon.png" class="img img-login-icon">
 				<h2 class="text-center">Login</h2>
 				<div style="padding: 14px;">
-					<el-input
+					<el-input type="email"
 						placeholder="Email address"
 						v-model="credentials.email">
 						<i slot="prefix" class="ti-user ti-slot"></i>
 					</el-input>
 				</div>
 				<div style="padding: 14px;">
-					<el-input
+					<el-input type="password"
 						placeholder="Password"
 						v-model="credentials.password">
 						<i slot="prefix" class="ti-lock ti-slot"></i>
@@ -40,14 +40,14 @@
 		data() {
 			return {
 				is_loading: false,
-				currentDate: new Date(),
-				// tableData: Array(20).fill(item)
-				tableData: [],
 				credentials: {
 					email: '',
 					password: ''
 				}
 			}
+		},
+		mounted: function() {
+
 		},
 		methods: {
 
@@ -55,18 +55,37 @@
 
 				this.is_loading = true;
 
-				axios.post(this.$api.url('login'), this.resolvedBankAccount)
+				axios.post(this.$api.url('login'), this.credentials)
 	                .then(response => {
-
 						this.is_loading = false;
-						console.log(response);
+
+						if (response.data.status && response.data.status == 'success') {
+
+							const authObj = {
+								token: response.data.payload.token.token,
+								user: response.data.payload.user,
+							}
+
+							this.$store.commit('authenticate', authObj)
+
+							this.$router.push({name: 'dashboard'});
+						}
+						else {
+
+							this.$snotify.error('Username - password combination does not match',
+								'Login failed');
+						}
 					})
 					.catch( err => {
 
 						this.is_loading = false;
-						console.log(err);
+						this.$snotify.error('Login attempt failed. Try again later',
+							'Ooops!');
+
+							console.log(err);
 					})
 			}
 		}
 	};
 </script>
+<!--  daniel@bucketlist.dev -->

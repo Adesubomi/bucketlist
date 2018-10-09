@@ -9,10 +9,10 @@
 					<img src="/assets/img/people.png" class="img img-login-icon">
 				</div>
 				<div style="margin: 20px;">
-					<el-menu default-active="2" :router="true"
+					<el-menu default-active="1" :router="true"
 						class="el-menu-vertical-demo">
 
-						<el-menu-item index="1" :route="{ name: 'home' }">
+						<el-menu-item index="1" :route="{ name: 'dashboard' }">
 							<i class="ti-home"></i>
 							<span>Dashboard </span>
 						</el-menu-item>
@@ -20,7 +20,7 @@
 							<i class="ti-package"></i>
 							<span>Buckelists </span>
 						</el-menu-item>
-						<el-menu-item index="3">
+						<el-menu-item index="3" :route="{ name: 'logout' }">
 							<i class="ti-power-off"></i>
 							<span>Logout</span>
 						</el-menu-item>
@@ -53,6 +53,11 @@
 		data() {
 			return {
 
+			}
+		},
+		methods: {
+			logout: function() {
+				console.log('Logging out');
 			}
 		}
 	};

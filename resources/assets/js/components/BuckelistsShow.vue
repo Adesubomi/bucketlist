@@ -4,54 +4,80 @@
 			<h3>Bucketlist details</h3>
 		</div>
 
-		<app-loader v-if="is_fetching">..Loading</app-loader>
+		<app-loader v-if="is_loading">..Loading</app-loader>
 
-		<div class="" v-if="!is_fetching">
+		<div class="" v-if="!is_loading">
 
-			<el-card class="bucketlist-card">
-				<el-row type="flex">
-					<el-col :span="2">
-						<div style="margin-top: 3px; text-align: center;">
-							<i class="ti-package"></i>
-						</div>
-					</el-col>
-					<el-col :span="21">
-						<div class="buckelist-name">{{bucketlist.name}}</div>
-						<div class="buckelist-date">{{bucketlist.date}}</div>
-					</el-col>
-				</el-row>
-			</el-card>
-
-			<div class="buckelist-items-list-block">
-				<div class="app-header-3">
-					<h4>Items in this list</h4>
-				</div>
-
-				<div v-for="i in 4">
-					<el-card class="bucketlist-item-card done" shadow="never">
-						<el-row type="flex">
-							<el-col :span="2">
-								<div style="margin-top: 3px; text-align: center;">
-									<i class="el-icon-document"></i>
-								</div>
-							</el-col>
-							<el-col :span="21">
-								<div class="buckelist-item-name">{{bucketlist.name}}</div>
-								<div class="buckelist-item-date">{{bucketlist.date}}</div>
-								<div class="" style="margin-top: 12px;">
-									<el-button type="primary" plain size="mini">
-										<i class="el-icon-edit"></i>
-									</el-button>
-									<el-button type="danger" plain size="mini">
-										<i class="el-icon-delete"></i>
-									</el-button>
-								</div>
-							</el-col>
-						</el-row>
-					</el-card>
-				</div>
+			<div v-if="!bucketlist.name" style="margin-top: 36px;">
+				<el-alert title="Hey!" type="warning" :closable="false" show-icon>
+					Bucketlist was not found
+				</el-alert>
 			</div>
 
+			<div v-if="bucketlist.name">
+				<el-card class="bucketlist-card">
+					<el-row type="flex">
+						<el-col :span="2">
+							<div style="margin-top: 3px; text-align: center;">
+								<i class="ti-package"></i>
+							</div>
+						</el-col>
+						<el-col :span="21">
+							<div class="buckelist-name">{{bucketlist.name}}</div>
+							<div class="buckelist-date">{{bucketlist.date}}</div>
+
+							<div class="" style="margin-top: 12px;">
+								<el-button type="" plain size="mini">
+									<i class="el-icon-plus"></i>
+								</el-button>
+								<el-button type="primary" plain size="mini">
+									<i class="el-icon-edit"></i>
+								</el-button>
+								<el-button type="danger" plain size="mini">
+									<i class="el-icon-delete"></i>
+								</el-button>
+							</div>
+
+						</el-col>
+					</el-row>
+				</el-card>
+
+				<div class="buckelist-items-list-block">
+					<div class="app-header-3">
+						<h4>Items in this list</h4>
+					</div>
+
+					<div class="" v-if="bucketlist.items.length == 0">
+						<el-alert title="Hey!" type="info" :closable="false" show-icon>
+							No items in this bucketlist
+						</el-alert>
+					</div>
+					<div v-for="item in bucketlist.items" v-if="bucketlist.items.length > 0">
+						<el-card class="bucketlist-item-card done" shadow="never">
+							<el-row type="flex">
+								<el-col :span="2">
+									<div style="margin-top: 3px; text-align: center;">
+										<i class="el-icon-document"></i>
+									</div>
+								</el-col>
+								<el-col :span="21">
+									<div class="buckelist-item-name">{{item.name}}</div>
+									<div class="buckelist-item-date">{{item.created_at}}</div>
+									<div class="" style="margin-top: 12px;">
+										<el-button type="primary" plain size="mini">
+											<i class="el-icon-edit"></i>
+										</el-button>
+										<el-button type="danger" plain size="mini">
+											<i class="el-icon-delete"></i>
+										</el-button>
+									</div>
+								</el-col>
+							</el-row>
+						</el-card>
+					</div>
+				</div>
+
+			</div>
 		</div>
 	</div>
 </template>
@@ -103,9 +129,9 @@ export default {
 	},
 	data () {
 		return {
-			is_fetching: true,
+			bucketlist_id: this.$route.params.id,
+			is_loading: true,
 			bucketlist: {
-				name: "Champioship finalist teams ever", date: "Today",
 				items: []
 			}
 		}
@@ -113,57 +139,36 @@ export default {
 	mounted: function () {
 		this.fetchBucketlist()
 	},
+	watch: {
+		'$route' (to, from) {
+			this.bucketlist_id = this.$route.params.id
+			this.fetchBucketlist()
+	    }
+	},
 	methods: {
 
 		fetchBucketlist: function () {
 
-			// console.log(axios.interceptors.response);
+			this.is_loading = true
 
-			// axios.get(this.$api.url('bucketlists'), this.resolvedBankAccount)
-            //     .then(response => {
-			// 		console.log(response.data)
-			// 	})
+			axios.get(this.$api.url('get_bucketlist_full', {id: this.bucketlist_id}))
+                .then(response => {
 
-			// this.$snotify.success('Example body content', 'Example title', {
-			//   timeout: 2000,
-			//   showProgressBar: false,
-			//   closeOnClick: false,
-			//   pauseOnHover: true
-			// });
+					this.is_loading = false
 
-			// console.log(`Getting this buckelist at ${this.$route.params.id}`)
-			//
-			// setTimeout( () => {
-			// 	this.is_fetching = false
-			// }, 1600);
-			//
-			// this.$snotify.success('Your bank account has been updated successfully.', 'Updated');
+                    if (response.data.status == 'success') {
+						this.bucketlist = response.data.payload;
+                    }
+                    else {
+                        // this.$snotify.error(response.data.message, 'Sorry!');
+                    }
+                })
+                .catch(error => {
 
-			// axios.post(this.$api.url('bank_account_create'), this.resolvedBankAccount)
-            //     .then(response => {
-            //         this.saving = false;
-			//
-            //         if (response.data.status == true) {
-			//
-            //             this.$snotify.success('Your bank account has been updated successfully.', 'Updated',
-            //                 this.$configs.snot.response);
-			//
-            //             this.$router.replace({name: 'settings'});
-            //         }
-            //         else {
-            //             this.$notify.errorNotify('Sorry!', response.data.message);
-            //         }
-            //     })
-            //     .catch(error => {
-			//
-            //         this.saving = false;
-			//
-            //         if ( this.$error.unprocessable(this, error) ) {
-            //             return;
-            //         }
-			//
-            //         this.$snotify.error(...this.$configs.snot.generalError, this.$configs.snot.auth);
-            //     });
+					console.log(error);
+					this.is_loading = false
+                    this.$snotify.error('Unable to get bucketlist full details', 'Ooops!');
+                });
 		}
 	}
 }

@@ -16,7 +16,12 @@ export default {
 	},
 
 	get_bucketlist: {
-		url: '/bucketlists/',
-		title: 'Bucketlists',
+		url: '/bucketlists/:id',
+		title: 'Bucketlist details',
+	},
+
+	get_bucketlist_full: {
+		url: '/bucketlists/:id/full',
+		title: 'Bucketlist details',
 	},
 }

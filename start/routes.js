@@ -19,18 +19,22 @@ const Route = use('Route')
 Route.get('/', 'HomeController.index');
 
 Route.group(() => {
-    Route.post('login', 'UserController.login').as('login')
+	Route.post('login', 'UserController.login').as('login')
     Route.post('signup', 'UserController.signup').as('signup')
 })
 .prefix('api/v1/auth')
-.namespace('Api/v1')
+.namespace('Api/v1');
 
 Route.group(() => {
-    Route.resource('bucketlists', 'BucketlistController').apiOnly()
+
+	Route.any('auth/logout', 'UserController.logout').as('logout')
+
+	Route.get('bucketlists/:id/full', 'BucketlistController.show_full')
+	Route.resource('bucketlists', 'BucketlistController').apiOnly()
     Route.resource('bucketlists.items', 'ItemController').apiOnly()
 })
 .prefix('api/v1')
 .namespace('Api/v1')
-.middleware('auth')
+.middleware('auth');
 
-Route.any('*', 'HomeController.index')
+// Route.any('*', 'HomeController.index')

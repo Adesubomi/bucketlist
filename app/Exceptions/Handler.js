@@ -24,13 +24,13 @@ class ExceptionHandler extends BaseExceptionHandler {
    */
   async handle (error, {request, response }) {
 
-    if (error.name === 'InvalidJwtToken') {
+	if (error.name === 'InvalidJwtToken') {
 
-      let errors = [];
-      errors.push({message: 'The token supplied is invalid'})
-      response.status(401).send(Api.failure('Unauthorized Access', {errors}));
-      return
-    }
+		let errors = [];
+		errors.push({message: 'The token supplied is invalid'})
+		response.status(401).send(Api.failure('Unauthorized Access', {errors}));
+		return
+	}
 
     response.status(error.status).send(error.message)
   }

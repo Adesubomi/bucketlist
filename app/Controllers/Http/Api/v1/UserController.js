@@ -10,29 +10,60 @@ class UserController {
 
     async login ({ request, auth }) {
 
-        const { email, password } = request.all()
+        const postData = request.all()
 
-        const user = await User.findBy('email', email)
-        if (!user || user.email != email) {
+        const rules = {
+            email: 'required',
+            password: 'required'
+        }
+		//
+        let validation = await validate(postData, rules)
 
-            return {message: 'User not found'}
+        if (validation.fails()) {
+
+            return Api.failure('Validation error', {
+                errors: validation._errorMessages
+            })
         }
 
-        const passwordMatch = await Hash.verify(password, user.password)
+        const user = await User.findBy('email', postData.email)
+        if (!user || user.email != postData.email) {
+
+			let errors = [];
+			errors.push({message: 'Cannot find user account', field: 'email'})
+			return Api.failure('Validation error', {errors: errors})
+        }
+
+        const passwordMatch = await Hash.verify(postData.password, user.password)
         if (!passwordMatch) {
 
-
+			let errors = [];
+			errors.push({message: 'Cannot find user account with this credentials'})
+			return Api.failure('Validation error', {errors: errors})
         }
 
         const authenticated = await auth.withRefreshToken().generate(user)
-
         return Api.success('Logged in successfully', {
             token: authenticated,
             user: {fullname: user.fullname, id: user.id}
         })
     }
 
-    async signup ({request}) {
+	async logout({auth}) {
+
+		// return auth.user.tokens().fetch()
+
+		const user = auth.current.user
+	    const token = auth.getAuthHeader()
+
+		await auth.user
+	      .tokens()
+	      .update({ is_revoked: true })
+
+		return Api.success('Logged out')
+	}
+
+	async signup ({request}) {
 
         const postData = request.all()
 

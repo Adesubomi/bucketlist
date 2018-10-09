@@ -10,14 +10,13 @@ let mix = require('laravel-mix');
  | file for your application, as well as bundling up your JS files.
  |
  */
- mix.disableSuccessNotifications()
- 	.js('resources/assets/js/app.js', 'public/assets/js')
+ mix.js('resources/assets/js/app.js', 'public/assets/js')
  	.sass('resources/assets/sass/app.sass', 'public/assets/css')
  	.copy('resources/assets/img', 'public/assets/img', false)
- 	.copy('resources/assets/fonts/themify-icons/fonts', 'public/fonts')
+ 	// mix.copy('resources/assets/fonts/themify-icons/fonts', 'public/fonts')
  	// This is because element-font don't reference correctly in css
  	// This solution is temporary
-	.copy('node_modules/element-ui/lib/theme-chalk/fonts', 'public/fonts/vendor/element-ui/lib/theme-chalk/');
+	// .copy('node_modules/element-ui/lib/theme-chalk/fonts', 'public/fonts/vendor/element-ui/lib/theme-chalk/')
 
 // Full API
 // mix.js(src, output);

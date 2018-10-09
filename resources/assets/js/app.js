@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import ElementUI from 'element-ui'
+import VueSnotify from 'vue-snotify'
+import {SnotifyPosition} from 'vue-snotify'
 // Load VueRouter instance containing front end routes
 import router from './routes'
 import store from './store'
@@ -18,10 +20,13 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(ElementUI)
 Vue.use(Utility)
-Vue.use(require('vue-snotify'), {
-    defaults: {
+Vue.use(VueSnotify, {
+    toast: {
         maxOnScreen: 1,
         maxAtPosition: 1,
+		showProgressBar: false,
+		position: SnotifyPosition.rightTop,
+		timeout: 5600,
     }
 });
 
@@ -78,7 +83,8 @@ const app = new Vue({
 	beforeCreate: function() {
 
 		// get the accessToken from whereever you stored it
-		store.commit('initialize')
+		this.$store.commit('initialize')
+
 		const accessToken = store.getters.token
 
 		// intercept requests
@@ -99,7 +105,7 @@ const app = new Vue({
             return response;
         });
 
-		// for whenn navigation is initiated
+		// for when navigation is initiated
         this.$router.beforeEach( (to, from, next) => {
 
             if ( to.meta.requires_auth !== undefined && to.meta.requires_auth === true ) {
