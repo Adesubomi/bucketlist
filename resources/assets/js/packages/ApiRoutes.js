@@ -24,4 +24,9 @@ export default {
 		url: '/bucketlists/:id/full',
 		title: 'Bucketlist details',
 	},
+
+	bucketlists_items: {
+		url: '/bucketlists/:bucketlist_id/items',
+		title: 'Bucketlist item',
+	},
 }

@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 import ElementUI from 'element-ui'
 import VueSnotify from 'vue-snotify'
 import {SnotifyPosition} from 'vue-snotify'
+import VueSweetalert2 from 'vue-sweetalert2';
+
 // Load VueRouter instance containing front end routes
 import router from './routes'
 import store from './store'
@@ -20,6 +22,7 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(ElementUI)
 Vue.use(Utility)
+Vue.use(VueSweetalert2)
 Vue.use(VueSnotify, {
     toast: {
         maxOnScreen: 1,
