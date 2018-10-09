@@ -42,24 +42,26 @@
 					</el-row>
 				</el-card>
 
-				<el-card class="bucketlist-card" v-if="create_item_is_open" v-loading="adding_item">
-					<h5 style="margin: 0; padding-bottom: 18px;">
-						Add Item to bucketlist
-						<i class="el-icon-close close-icon pull-right" @click="create_item_is_open = false"></i>
-					</h5>
+				<transition name="el-zoom-in-top">
+					<el-card class="bucketlist-card" v-show="create_item_is_open" v-loading="adding_item">
+						<h5 style="margin: 0; padding-bottom: 18px;">
+							Add Item to bucketlist
+							<i class="el-icon-close close-icon pull-right" @click="create_item_is_open = false"></i>
+						</h5>
 
-					<el-row :gutter="10">
-						<el-col :span="18">
-							<el-input placeholder="Name of item" v-model="new_item.name"></el-input>
-						</el-col>
-						<el-col :span="6">
-							<el-button type="primary" @click="addItemToBucketlist()">
-								<i class="el-icon-upload el-icon-right"></i> &nbsp;
-								Save
-							</el-button>
-						</el-col>
-					</el-row>
-				</el-card>
+						<el-row :gutter="10">
+							<el-col :span="18">
+								<el-input placeholder="Name of item" v-model="new_item.name"></el-input>
+							</el-col>
+							<el-col :span="6">
+								<el-button type="primary" @click="addItemToBucketlist()">
+									<i class="el-icon-upload el-icon-right"></i> &nbsp;
+									Save
+								</el-button>
+							</el-col>
+						</el-row>
+					</el-card>
+				</transition>
 
 				<div class="buckelist-items-list-block">
 					<div class="app-header-3">
@@ -82,14 +84,14 @@
 								<el-col :span="21">
 									<div class="buckelist-item-name">{{item.name}}</div>
 									<div class="buckelist-item-date">{{item.created_at}}</div>
-									<div class="" style="margin-top: 12px;">
+									<!-- <div class="" style="margin-top: 12px;">
 										<el-button type="primary" plain size="mini">
 											<i class="el-icon-edit"></i>
 										</el-button>
 										<el-button type="danger" plain size="mini">
 											<i class="el-icon-delete"></i>
 										</el-button>
-									</div>
+									</div> -->
 								</el-col>
 							</el-row>
 						</el-card>
@@ -114,6 +116,7 @@ export default {
 			bucketlist_id: this.$route.params.id,
 			is_loading: true,
 			create_item_is_open: false,
+			edit_bucketlist_is_open: false,
 			adding_item: false,
 			bucketlist: {
 				items: []
@@ -136,6 +139,7 @@ export default {
 
 		sanitize_ui: function () {
 			this.create_item_is_open = false
+			this.edit_bucketlist_is_open = false
 			this.is_loading = false
 			this.adding_item = false
 
@@ -157,7 +161,6 @@ export default {
                 })
                 .catch(error => {
 
-					console.log(error);
 					this.is_loading = false
                     this.$snotify.error('Unable to get bucketlist full details', 'Ooops!');
                 });
@@ -172,11 +175,11 @@ export default {
 				.then(response => {
 
 					this.adding_item = false
-					this.sanitize_ui()
 
 					if (response.data.status == 'success') {
 
 						this.$snotify.success('Item has been added to bucketlist', 'Great')
+						this.sanitize_ui()
 						this.fetchBucketlist()
 					}
 					else {
@@ -188,7 +191,6 @@ export default {
 					this.adding_item = false
 					this.sanitize_ui()
 
-					console.log(error);
 					this.$snotify.error('Unable to add item', 'Ooops!')
 				});
 		},
@@ -222,8 +224,6 @@ export default {
 		                .then(response => {
 
 							this.$swal.close()
-							console.log(response)
-
 		                    if (response.data.status == 'success') {
 								this.$snotify.success('Bucketlist has been deleted successfully', 'Great')
 								this.$router.push({name: 'bucketlists.index'})
@@ -233,9 +233,7 @@ export default {
 							}
 		                })
 		                .catch(error => {
-
 							this.$swal.close()
-							console.log(error);
 		                    this.$snotify.error('Unable to delete this bucketlist', 'Ooops!')
 		                });
 		  		},
@@ -249,7 +247,6 @@ export default {
 <style scoped="">
 	.bucketlist-card {
 		margin-top: 12px;
-		cursor: pointer;
 	}
 
 	.bucketlist-card .buckelist-name {
