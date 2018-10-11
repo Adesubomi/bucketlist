@@ -10,7 +10,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import router from './routes'
 import store from './store'
 import Utility from './packages/Utility';
-import axios from 'axios'
+import axios from 'axios';
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our back-end. This library automatically handles sending the

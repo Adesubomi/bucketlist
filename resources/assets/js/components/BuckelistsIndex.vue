@@ -15,7 +15,7 @@
 			<el-card class="bucketlist-card" v-if="create_item_is_open && !is_loading" v-loading="adding_bucketlist">
 				<h5 style="margin: 0; padding-bottom: 18px;">
 					Create a buckelist
-					<i class="el-icon-close close-icon pull-right" @click="create_item_is_open = false"></i>
+					<i class="el-icon-close close-icon pull-right c-pointer" @click="create_item_is_open = false"></i>
 				</h5>
 
 				<el-row :gutter="10">

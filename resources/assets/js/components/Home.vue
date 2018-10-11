@@ -9,8 +9,7 @@
 					<img src="/assets/img/people.png" class="img img-login-icon">
 				</div>
 				<div style="margin: 20px;">
-					<el-menu default-active="1" :router="true"
-						class="el-menu-vertical-demo">
+					<el-menu default-active="1" :router="true" class="el-menu-vertical-demo">
 
 						<el-menu-item index="1" :route="{ name: 'dashboard' }">
 							<i class="ti-home"></i>
@@ -52,7 +51,7 @@
 	export default {
 		data() {
 			return {
-
+				
 			}
 		},
 		methods: {

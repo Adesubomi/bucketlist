@@ -23,14 +23,14 @@
 							</div>
 						</el-col>
 						<el-col :span="21">
-							<div class="buckelist-name">{{bucketlist.name}}</div>
-							<div class="buckelist-date">{{bucketlist.date}}</div>
+							<div class="bucketlist-name">{{bucketlist.name}}</div>
+							<div class="bucketlist-date">{{bucketlist.date}}</div>
 
 							<div class="" style="margin-top: 12px;">
-								<el-button type="" plain size="mini" @click="create_item_is_open = true">
+								<el-button type="" plain size="mini" @click="openCreateItem()">
 									<i class="el-icon-plus"></i>
 								</el-button>
-								<el-button type="primary" plain size="mini">
+								<el-button type="primary" plain size="mini" @click="openEditBucketlist()">
 									<i class="el-icon-edit"></i>
 								</el-button>
 								<el-button type="danger" plain size="mini" @click.native="confirmDeleteBucketlist(bucketlist.id)">
@@ -43,10 +43,31 @@
 				</el-card>
 
 				<transition name="el-zoom-in-top">
+					<el-card class="bucketlist-card" v-show="edit_bucketlist_is_open" v-loading="updating_bucketlist">
+						<h5 style="margin: 0; padding-bottom: 18px;">
+							Edit this BucketList
+							<i class="el-icon-close close-icon pull-right c-pointer" @click="edit_bucketlist_is_open = false"></i>
+						</h5>
+
+						<el-row :gutter="10">
+							<el-col :span="18">
+								<el-input placeholder="Name of item" v-model="edit_bucketlist.name"></el-input>
+							</el-col>
+							<el-col :span="6">
+								<el-button type="primary" @click="updateBucketlist()">
+									<i class="ti-save"></i> &nbsp;
+									Update
+								</el-button>
+							</el-col>
+						</el-row>
+					</el-card>
+				</transition>
+
+				<transition name="el-zoom-in-top">
 					<el-card class="bucketlist-card" v-show="create_item_is_open" v-loading="adding_item">
 						<h5 style="margin: 0; padding-bottom: 18px;">
 							Add Item to bucketlist
-							<i class="el-icon-close close-icon pull-right" @click="create_item_is_open = false"></i>
+							<i class="el-icon-close close-icon pull-right c-pointer" @click="create_item_is_open = false"></i>
 						</h5>
 
 						<el-row :gutter="10">
@@ -63,7 +84,7 @@
 					</el-card>
 				</transition>
 
-				<div class="buckelist-items-list-block">
+				<div class="bucketlist-items-list-block">
 					<div class="app-header-3">
 						<h4>Items in this list</h4>
 					</div>
@@ -82,8 +103,8 @@
 									</div>
 								</el-col>
 								<el-col :span="21">
-									<div class="buckelist-item-name">{{item.name}}</div>
-									<div class="buckelist-item-date">{{item.created_at}}</div>
+									<div class="bucketlist-item-name">{{item.name}}</div>
+									<div class="bucketlist-item-date">{{item.created_at}}</div>
 									<!-- <div class="" style="margin-top: 12px;">
 										<el-button type="primary" plain size="mini">
 											<i class="el-icon-edit"></i>
@@ -117,6 +138,7 @@ export default {
 			is_loading: true,
 			create_item_is_open: false,
 			edit_bucketlist_is_open: false,
+			updating_bucketlist: false,
 			adding_item: false,
 			bucketlist: {
 				items: []
@@ -135,15 +157,32 @@ export default {
 			this.fetchBucketlist()
 	    }
 	},
+	computed: {
+		edit_bucketlist: function () {
+			// clone
+			return Object.assign({}, this.bucketlist)
+		}
+	},
 	methods: {
 
 		sanitize_ui: function () {
 			this.create_item_is_open = false
 			this.edit_bucketlist_is_open = false
+			this.updating_bucketlist = false
 			this.is_loading = false
 			this.adding_item = false
 
 			this.new_item.name = ''
+		},
+
+		openCreateItem: function() {
+			this.sanitize_ui()
+			this.create_item_is_open = true
+		},
+
+		openEditBucketlist: function() {
+			this.sanitize_ui()
+			this.edit_bucketlist_is_open = true
 		},
 
 		fetchBucketlist: function () {
@@ -192,6 +231,35 @@ export default {
 					this.sanitize_ui()
 
 					this.$snotify.error('Unable to add item', 'Ooops!')
+				});
+		},
+
+		updateBucketlist: function () {
+
+			this.updating_bucketlist = true
+
+			axios.put(this.$api.url('get_bucketlist', {id: this.bucketlist_id}), this.edit_bucketlist)
+
+				.then(response => {
+
+					this.updating_bucketlist = false
+
+					if (response.data.status == 'success') {
+
+						this.$snotify.success('Bucketlist has been updated successfully', 'Great')
+						this.sanitize_ui()
+						this.fetchBucketlist()
+					}
+					else {
+						this.$snotify.error('Unable to edit this bucketlist', 'Sorry!')
+					}
+				})
+				.catch(error => {
+
+					this.updating_bucketlist = false
+					this.sanitize_ui()
+
+					this.$snotify.error('Unable to update changes', 'Ooops!')
 				});
 		},
 
@@ -249,11 +317,11 @@ export default {
 		margin-top: 12px;
 	}
 
-	.bucketlist-card .buckelist-name {
+	.bucketlist-card .bucketlist-name {
 		font-size: 17px;
 		font-weight: bold;
 	}
-	.bucketlist-card .buckelist-date {
+	.bucketlist-card .bucketlist-date {
 		margin-top: 4px;
 		color: #707070;
 		font-size: 12px;
@@ -269,10 +337,10 @@ export default {
 	}
 
 
-	.bucketlist-item-card .buckelist-item-name {
+	.bucketlist-item-card .bucketlist-item-name {
 		font-size: 17px;
 	}
-	.bucketlist-item-card .buckelist-item-date {
+	.bucketlist-item-card .bucketlist-item-date {
 		margin-top: 4px;
 		color: #707070;
 		font-size: 12px;
